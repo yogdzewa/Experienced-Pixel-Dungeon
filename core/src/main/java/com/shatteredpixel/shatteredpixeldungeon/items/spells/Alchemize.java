@@ -39,6 +39,8 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndEnergizeItem;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoItem;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
 import com.watabou.noosa.audio.Sample;
+import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
+import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 
 public class Alchemize extends Spell {
 	
@@ -86,13 +88,38 @@ public class Alchemize extends Spell {
 					&& (Shopkeeper.canSell(item) || item.energyVal() > 0);
 		}
 
+		public void JustSell(Item item){
+			Hero hero = Dungeon.hero;
+
+			if (item.isEquipped( hero ) && !((EquipableItem)item).doUnequip( hero, false )) {
+				return;
+			}
+			item.detachAll( hero.belongings.backpack );
+
+			hero.spend(-hero.cooldown());
+
+			new Gold( item.value() ).doPickUp( hero );
+		}
+
+		public void ConsumeAlchemize(){
+			Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+			if (curItem.quantity() <= 1){
+				curItem.detachAll(Dungeon.hero.belongings.backpack);
+			} else {
+				curItem.detach(Dungeon.hero.belongings.backpack);
+				GameScene.selectItem(itemSelector);
+			}
+		}
+
 		@Override
 		public void onSelect( Item item ) {
+//			parentWnd = GameScene.selectItem(itemSelector);
 			if (item != null) {
-				if (parentWnd != null) {
-					parentWnd = GameScene.selectItem(itemSelector);
-				}
-				GameScene.show( new WndAlchemizeItem( item, parentWnd ) );
+//				if (parentWnd != null) {
+//				}
+//				GameScene.show( new WndAlchemizeItem( item, parentWnd ) );
+				JustSell(item);
+				ConsumeAlchemize();
 			}
 		}
 	};
