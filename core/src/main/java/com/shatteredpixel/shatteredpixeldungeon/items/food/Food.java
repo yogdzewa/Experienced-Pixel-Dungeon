@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Perks;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
+import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
@@ -130,10 +131,10 @@ public class Food extends Item {
 						h.pickUp();
 						hero.spend(-Item.TIME_TO_PICK_UP); //casting the spell already takes a turn
 						GLog.i( Messages.capitalize(Messages.get(hero, "you_now_have", item.name())) );
-					} else {
-						GLog.w(Messages.get(this, "cant_grab"));
-						h.sprite.drop();
-						return;
+//					} else if (!(item instanceof Dewdrop)){
+//						GLog.w(Messages.get(this, "cant_grab"));
+//						h.sprite.drop();
+//						return;
 					}
 				}
 			}
