@@ -68,6 +68,10 @@ public class SPDAction extends GameAction {
 	public static final GameAction QUICKSLOT_4  = new SPDAction("quickslot_4");
 	public static final GameAction QUICKSLOT_5  = new SPDAction("quickslot_5");
 	public static final GameAction QUICKSLOT_6  = new SPDAction("quickslot_6");
+	public static final GameAction QUICKSLOT_7 = new SPDAction("quickslot_7");
+	public static final GameAction QUICKSLOT_8 = new SPDAction("quickslot_8");
+	public static final GameAction QUICKSLOT_9 = new SPDAction("quickslot_9");
+	public static final GameAction QUICKSLOT_10 = new SPDAction("quickslot_10");
 
 	public static final GameAction BAG_1        = new SPDAction("bag_1");
 	public static final GameAction BAG_2        = new SPDAction("bag_2");

@@ -112,10 +112,10 @@ public class Toolbar extends Component {
 				}
 
 				if (Dungeon.hero != null && Dungeon.hero.ready && !GameScene.cancel()) {
-
-					String[] slotNames = new String[6];
-					Image[] slotIcons = new Image[6];
-					for (int i = 0; i < 6; i++){
+					int slotSize = Dungeon.quickslot.getSize();
+					String[] slotNames = new String[slotSize];
+					Image[] slotIcons = new Image[slotSize];
+					for (int i = 0; i < slotSize; i++){
 						Item item = Dungeon.quickslot.getItem(i);
 
 						if (item != null && !Dungeon.quickslot.isPlaceholder(i) &&
@@ -482,6 +482,7 @@ public class Toolbar extends Component {
 		int quickslotsToShow = 4;
 		if (PixelScene.uiCamera.width > 152) quickslotsToShow ++;
 		if (PixelScene.uiCamera.width > 170) quickslotsToShow ++;
+		if (PixelScene.uiCamera.width > 400) quickslotsToShow = Dungeon.quickslot.getSize();
 
 		int startingSlot;
 		if (SPDSettings.quickSwapper() && quickslotsToShow < 6){
