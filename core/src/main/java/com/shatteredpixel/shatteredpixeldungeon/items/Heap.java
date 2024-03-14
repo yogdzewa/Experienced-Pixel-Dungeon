@@ -155,6 +155,19 @@ public class Heap implements Bundlable {
 		return item;
 	}
 
+	public void pickUpSpecific(int idx){
+		if (items.isEmpty()){
+			destroy();
+			return;
+		}
+		items.remove(idx);
+		if (items.isEmpty()) {
+			destroy();
+		} else if (sprite != null) {
+			sprite.view(this).place( pos );
+		}
+	}
+
 	public static Item getClone(Item toClone) {
 		Bundle lol = new Bundle();
 		toClone.storeInBundle(lol);

@@ -32,7 +32,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Perks;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
-import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
@@ -126,15 +125,15 @@ public class Food extends Item {
 		if (hero.perks.contains(Perks.Perk.COLLECT_EVERYTHING) && this instanceof SmallRation){
 			for (Heap h : Dungeon.level.heaps.valueList()){
 				if (h.type == Heap.Type.HEAP) {
-					Item item = h.peek();
-					if (item.doPickUp(hero, h.pos)) {
-						h.pickUp();
-						hero.spend(-Item.TIME_TO_PICK_UP); //casting the spell already takes a turn
-						GLog.i( Messages.capitalize(Messages.get(hero, "you_now_have", item.name())) );
-//					} else if (!(item instanceof Dewdrop)){
-//						GLog.w(Messages.get(this, "cant_grab"));
-//						h.sprite.drop();
-//						return;
+					int size = h.items.size();
+					for(int i = 0; i < size; i++) {
+						Item item = h.items.get(i);
+						if (item.doPickUp(hero, h.pos)) {
+							h.pickUpSpecific(i);
+							hero.spend(-Item.TIME_TO_PICK_UP); //casting the spell already takes a turn
+							GLog.i(Messages.capitalize(Messages.get(hero, "you_now_have", item.name())));
+							break;
+						}
 					}
 				}
 			}
