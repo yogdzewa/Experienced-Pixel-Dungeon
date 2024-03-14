@@ -96,7 +96,7 @@ public class Alchemize extends Spell {
 			}
 			item.detachAll( hero.belongings.backpack );
 
-			hero.spend(-hero.cooldown());
+			hero.spend(-(hero.cooldown()*2));
 
 			new Gold( item.value() ).doPickUp( hero );
 		}
