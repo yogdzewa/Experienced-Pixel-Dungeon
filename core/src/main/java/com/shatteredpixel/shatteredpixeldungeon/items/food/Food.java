@@ -131,7 +131,7 @@ public class Food extends Item {
 						if (item.doPickUp(hero, h.pos)) {
 							h.pickUpSpecific(i);
 							hero.spend(-Item.TIME_TO_PICK_UP); //casting the spell already takes a turn
-							GLog.i(Messages.capitalize(Messages.get(hero, "you_now_have", item.name())));
+							GLog.w( Messages.capitalize(Messages.get(hero, "you_cant_have", item.name())) );
 							break;
 						}
 					}

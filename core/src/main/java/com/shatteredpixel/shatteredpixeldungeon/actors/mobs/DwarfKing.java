@@ -68,7 +68,7 @@ public class DwarfKing extends Mob {
 	{
 		spriteClass = KingSprite.class;
 
-		HP = HT = 25 * theSubjectConstant();
+		HP = HT = 75 * theSubjectConstant();
 		EXP = 40;
 		defenseSkill = 22;
 
@@ -76,25 +76,30 @@ public class DwarfKing extends Mob {
 		properties.add(Property.UNDEAD);
         switch (Dungeon.cycle){
             case 1:
-                HP = HT = 323 * theSubjectConstant();
+                HP = HT = 969 * theSubjectConstant();
                 defenseSkill = 89;
                 EXP = 725;
                 break;
             case 2:
-                HP = HT = 5025 * theSubjectConstant();
+                HP = HT = 15075 * theSubjectConstant();
                 defenseSkill = 324;
                 EXP = 25000;
                 break;
             case 3:
-                HP = HT = 125000 * theSubjectConstant();
+                HP = HT = 475000 * theSubjectConstant();
                 defenseSkill = 780;
                 EXP = 400000;
                 break;
             case 4:
-                HP = HT = 15000000 * theSubjectConstant();
+                HP = HT = 45000000 * theSubjectConstant();
                 defenseSkill = 7000;
                 EXP = 99999999;
                 break;
+			case 5:
+				HP = HT = 525000000 * theSubjectConstant();
+				defenseSkill = 134000;
+				EXP = 999999999L;
+				break;
         }
 	}
 
@@ -109,6 +114,7 @@ public class DwarfKing extends Mob {
             case 2: return Random.NormalIntRange(297, 455);
             case 3: return Random.NormalIntRange(2000, 2800);
             case 4: return Random.NormalIntRange(90000, 250000);
+			case 5: return Random.NormalIntRange(2600000, 8000000);
         }
 		return Random.NormalIntRange( 15, 25 );
 	}
@@ -120,6 +126,7 @@ public class DwarfKing extends Mob {
             case 2: return 387;
             case 3: return 1100;
             case 4: return 10000;
+			case 5: return 145750;
         }
 		return 26;
 	}
@@ -131,6 +138,7 @@ public class DwarfKing extends Mob {
             case 2: return Random.NormalIntRange(140, 295);
             case 3: return Random.NormalIntRange(1100, 1980);
             case 4: return Random.NormalIntRange(90000, 170000);
+			case 5: return Random.NormalIntRange(3200000, 6500000);
         }
 		return Random.NormalIntRange(0, 10);
 	}
@@ -525,18 +533,18 @@ public class DwarfKing extends Mob {
 				sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "invulnerable"));
 				ScrollOfTeleportation.appear(this, CityBossLevel.throne);
 				properties.add(Property.IMMOVABLE);
-				phase = 2;
+				phase = 3;
 				summonsMade = 0;
 				sprite.idle();
-				Buff.affect(this, DKBarrior.class).setShield(HT);
-				for (Summoning s : buffs(Summoning.class)) {
-					s.detach();
-				}
-				for (Mob m : Dungeon.level.mobs.toArray(new Mob[0])) {
-					if (m instanceof Ghoul || m instanceof Monk || m instanceof Warlock || m instanceof Golem) {
-						m.die(null);
-					}
-				}
+//				Buff.affect(this, DKBarrior.class).setShield(HT);
+//				for (Summoning s : buffs(Summoning.class)) {
+//					s.detach();
+//				}
+//				for (Mob m : Dungeon.level.mobs.toArray(new Mob[0])) {
+//					if (m instanceof Ghoul || m instanceof Monk || m instanceof Warlock || m instanceof Golem) {
+//						m.die(null);
+//					}
+//				}
 			}
 		} else if (phase == 2 && shielding() == 0) {
 			properties.remove(Property.IMMOVABLE);

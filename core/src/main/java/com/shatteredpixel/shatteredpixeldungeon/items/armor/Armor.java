@@ -269,15 +269,15 @@ public class Armor extends EquipableItem implements EquipableItem.Tierable {
 	}
 
 	public final long DRMax(){
-		return Math.round(DRMax(buffedLvl())*(1f + Weapon.hardenBoost(buffedLvl())));
+		return Math.round(DRMax(buffedLvl())*(1d + (glyphHardened ? Weapon.hardenBoost(buffedLvl()) : 0d)));
 	}
 
 	public long DRMax(long lvl){
 		if (Dungeon.isChallenged(Challenges.NO_ARMOR)){
-			return 1 + tier + lvl + augment.defenseFactor(lvl);
+			return 1 + tier() + lvl + augment.defenseFactor(lvl);
 		}
 
-		long max = tier * (2 + lvl) + augment.defenseFactor(lvl);
+		long max = tier() * (2 + lvl) + augment.defenseFactor(lvl);
 		if (lvl > max){
 			return ((lvl - max)+1)/2;
 		} else {
@@ -286,7 +286,7 @@ public class Armor extends EquipableItem implements EquipableItem.Tierable {
 	}
 
 	public final long DRMin(){
-		return Math.round(DRMin(buffedLvl())*(1f + Weapon.hardenBoost(buffedLvl())));
+		return Math.round(DRMin(buffedLvl())*(1d + (glyphHardened ? Weapon.hardenBoost(buffedLvl()) : 0d)));
 	}
 
 	public long DRMin(long lvl){
@@ -337,9 +337,9 @@ public class Armor extends EquipableItem implements EquipableItem.Tierable {
 					break;
 				}
 			}
-			if (!enemyNear) speed *= (1.2f + 0.04f * buffedLvl()) * glyph.procChanceMultiplier(owner);
+			if (!enemyNear) speed *= (0.95f - 0.05f * buffedLvl()) / glyph.procChanceMultiplier(owner);
 		} else if (hasGlyph(Flow.class, owner) && Dungeon.level.water[owner.pos]){
-			speed *= (2f + 0.5f*buffedLvl()) * glyph.procChanceMultiplier(owner);
+			speed *= (1.25f + 0.0005f*buffedLvl()) * glyph.procChanceMultiplier(owner);
 		}
 		
 		if (hasGlyph(Bulk.class, owner) &&
@@ -363,7 +363,21 @@ public class Armor extends EquipableItem implements EquipableItem.Tierable {
 
 	@Override
 	public int tier() {
-		return tier;
+		switch (Math.max(0, (tier-1) / 5)){
+			case 0:
+				return tier;
+			case 1:
+				return tier+5;
+			case 2:
+				return Math.round(tier*3f);
+			case 3:
+				return Math.round((tier+12)*5f);
+			case 4:
+				return Math.round((tier+30)*8f);
+			case 5:
+			default:
+				return Math.round((tier+150)*15f);
+		}
 	}
 	
 	@Override
@@ -599,7 +613,7 @@ public class Armor extends EquipableItem implements EquipableItem.Tierable {
 	public static abstract class Glyph implements Bundlable {
 		
 		public static final Class<?>[] common = new Class<?>[]{
-				Obfuscation.class, Swiftness.class, Viscosity.class, Potential.class };
+				Obfuscation.class, Viscosity.class, Potential.class };
 
 		public static final Class<?>[] uncommon = new Class<?>[]{
 				Brimstone.class, Stone.class, Entanglement.class,
@@ -616,7 +630,7 @@ public class Armor extends EquipableItem implements EquipableItem.Tierable {
 
 		private static final Class<?>[] curses = new Class<?>[]{
 				AntiEntropy.class, Corrosion.class, Displacement.class, Metabolism.class,
-				Multiplicity.class, Stench.class, Overgrowth.class, Bulk.class
+				Multiplicity.class, Stench.class, Overgrowth.class, Bulk.class, Swiftness.class
 		};
 		
 		public abstract long proc( Armor armor, Char attacker, Char defender, long damage );

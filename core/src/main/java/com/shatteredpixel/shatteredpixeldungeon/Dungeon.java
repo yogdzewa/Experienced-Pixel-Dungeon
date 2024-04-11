@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.*;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -195,6 +196,7 @@ public class Dungeon {
 	public static double fireDamage;
 	public static int luck;
 	public static long energy;
+	public static double resetDamage;
 
 	public static HashSet<Integer> chapters;
 
@@ -266,6 +268,7 @@ public class Dungeon {
 		fireDamage = 1d;
 		luck = 1;
 		energy = 0L;
+		resetDamage = 1d;
 
 		droppedItems = new SparseArray<>();
 
@@ -299,8 +302,11 @@ public class Dungeon {
         for (LimitedDrops a : LimitedDrops.values())
             if (a != LimitedDrops.BBAT && a != LimitedDrops.CHEESY_CHEEST)  a.count = 0;
         Notes.reset();
-        if (cycle < 4) cycle += 1;
+        if (cycle < 5) cycle += 1;
+		Dungeon.resetDamage = 1d + (Dungeon.resetDamage - 1d) * 0.5d;
         GameLog.wipe();
+		SpecialRoom.initForRun();
+		SecretRoom.initForRun();
         Generator.generalReset();
 		generatedLevels.clear();
 		BeaconOfReturning beacon = Dungeon.hero.belongings.getItem(BeaconOfReturning.class);
@@ -318,10 +324,11 @@ public class Dungeon {
     public static int escalatingDepth(int depth){
 	    switch (cycle){
             case 0: return depth;
-            case 1: return (int) (depth*1.4f +31);
-            case 2: return depth*5+200;
-            case 3: return depth*50+2500;
-            case 4: return depth*100 + 4300;
+            case 1: return (int) (depth*2f + 55);
+            case 2: return depth*25+750;
+            case 3: return depth*300+12500;
+            case 4: return depth*3000 + 100000;
+			case 5: return depth*40000 + 410000;
         }
         return depth;
     }
@@ -645,6 +652,10 @@ public class Dungeon {
 		return Random.Int(5 - floorThisSet) < asLeftThisSet;
 	}
 
+	public static double resetDamage(){
+		return resetDamage + Statistics.duration * 0.000075d;
+	}
+
 	private static final String INIT_VER	= "init_ver";
 	private static final String VERSION		= "version";
 	private static final String SEED		= "seed";
@@ -659,6 +670,7 @@ public class Dungeon {
     private static final String RESPAWN_TIMER		= "respawntimer";
     private static final String ADDMOBS		= "additionalMobs";
     private static final String FIREDANAGE = "firedamage";
+	private static final String RESETDAMAGE = "resetdamage";
     private static final String LUCK        = "luck";
 	private static final String BRANCH		= "branch";
 	private static final String GENERATED_LEVELS    = "generated_levels";
@@ -695,6 +707,7 @@ public class Dungeon {
 			bundle.put( RESPAWN_TIMER, respawn_timer);
 			bundle.put( ADDMOBS, additionalMobs);
 			bundle.put(FIREDANAGE, fireDamage);
+			bundle.put(RESETDAMAGE, resetDamage);
 			bundle.put(LUCK, luck);
 			Bbat.saveLevel(bundle);
 
@@ -873,6 +886,11 @@ public class Dungeon {
 		additionalMobs = bundle.getInt(ADDMOBS);
 		fireDamage = bundle.getDouble(FIREDANAGE);
 		luck = bundle.getInt(LUCK);
+		if (bundle.contains(RESETDAMAGE)){
+			resetDamage = bundle.getDouble(RESETDAMAGE);
+		} else {
+			resetDamage = 1d;
+		}
 
 		Statistics.restoreFromBundle( bundle );
 		Generator.restoreFromBundle( bundle );
@@ -983,6 +1001,7 @@ public class Dungeon {
 	public static void observe(){
 		int dist = Math.max(Dungeon.hero.viewDistance, 8);
 		dist *= 1f + 0.25f*Dungeon.hero.pointsInTalent(Talent.FARSIGHT);
+		if (Dungeon.hero.isSubclass(HeroSubClass.SNIPER)) dist = Math.round(dist * 1.5f);
 
 		if (Dungeon.hero.buff(MagicalSight.class) != null){
 			dist = Math.max( dist, MagicalSight.DISTANCE );
@@ -1283,7 +1302,7 @@ public class Dungeon {
 	public static double Double(){
 		double highest = Double.MIN_VALUE;
 		for (int i = 0; i < luck; i++){
-			float roll = Random.Float();
+			double roll = Random.Double();
 			if (roll > highest) highest = roll;
 		}
 		return highest;
