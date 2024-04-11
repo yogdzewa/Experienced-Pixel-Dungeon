@@ -205,7 +205,8 @@ public class OOFThief extends Mob {
 		}
 		
 		if (counter >= STEAL_COUNT*4 && counter % (4*STEAL_COUNT) == 0) {
-			if (Dungeon.hero.fieldOfView[pos])
+//			if (Dungeon.hero.fieldOfView[pos])
+			if (Dungeon.level.heroFOV[pos])
 				CellEmitter.get( pos ).start( Speck.factory( Speck.STEAM ), 0.05f, 20 );
 
 			int count = 64;
