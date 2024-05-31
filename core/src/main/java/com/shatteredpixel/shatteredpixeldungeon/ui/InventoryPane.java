@@ -26,7 +26,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.*;
@@ -180,7 +179,7 @@ public class InventoryPane extends Component {
 		}
 
 		bags = new ArrayList<>();
-		for (int i = 0; i < 5; i++){
+		for (int i = 0; i < 6; i++){
 			BagButton btn = new BagButton(null, i+1);
 			bags.add(btn);
 			add(btn);
@@ -223,20 +222,6 @@ public class InventoryPane extends Component {
 			promptTxt.setPos(left, y + 4 + (10 - promptTxt.height()) / 2);
 		}
 
-		goldTxt.x = left;
-		goldTxt.y = y+5.5f;
-		PixelScene.align(goldTxt);
-
-		gold.x = goldTxt.x + goldTxt.width() + 1;
-		gold.y = goldTxt.y;
-
-		energyTxt.x = gold.x + gold.width() + 2;
-		energyTxt.y = y+5.5f;
-		PixelScene.align(energyTxt);
-
-		energy.x = energyTxt.x + energyTxt.width() + 1;
-		energy.y = energyTxt.y;
-
 		for (BagButton b : bags){
 			b.setRect(left+15, y + 6, SLOT_WIDTH, 14);
 			left = b.right()-14;
@@ -252,6 +237,20 @@ public class InventoryPane extends Component {
 				top += SLOT_HEIGHT+1;
 			}
 		}
+
+		goldTxt.x = left;
+		goldTxt.y = top+1.5f;
+		PixelScene.align(goldTxt);
+
+		gold.x = goldTxt.x + goldTxt.width() + 1;
+		gold.y = goldTxt.y;
+
+		energyTxt.x = left;
+		energyTxt.y = goldTxt.height()-0.5f+goldTxt.y;
+		PixelScene.align(energyTxt);
+
+		energy.x = energyTxt.x + energyTxt.width();
+		energy.y = energyTxt.y;
 
 		super.layout();
 	}
@@ -354,7 +353,7 @@ public class InventoryPane extends Component {
 			}
 		}
 
-		boolean lostInvent = Dungeon.hero.buff(LostInventory.class) != null;
+		boolean lostInvent = Dungeon.hero.belongings.lostInventory();
 		for (InventorySlot b : equipped){
 			b.enable(lastEnabled
 					&& !(b.item() instanceof WndBag.Placeholder)
@@ -444,7 +443,7 @@ public class InventoryPane extends Component {
 		if (lastEnabled != (Dungeon.hero.ready || !Dungeon.hero.isAlive())) {
 			lastEnabled = (Dungeon.hero.ready || !Dungeon.hero.isAlive());
 
-			boolean lostInvent = Dungeon.hero.buff(LostInventory.class) != null;
+			boolean lostInvent = Dungeon.hero.belongings.lostInventory();
 			for (InventorySlot b : equipped){
 				b.enable(lastEnabled
 						&& !(b.item() instanceof WndBag.Placeholder)
@@ -478,6 +477,8 @@ public class InventoryPane extends Component {
 			return Icons.get( Icons.WAND_HOLSTER );
 		} else if (bag instanceof PotionBandolier) {
 			return Icons.get( Icons.POTION_BANDOLIER );
+		} else if (bag instanceof CheeseCheest){
+			return Icons.get( Icons.CHEESY_CHEEST );
 		} else {
 			return Icons.get( Icons.BACKPACK );
 		}
